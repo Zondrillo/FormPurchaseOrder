@@ -6,12 +6,12 @@ from configs import config
 
 def pivot_helper(file_name: str, tech_task_type: str) -> list:
     """Создаёт списки сводных таблиц для каждого грузополучателя, в соответствии со статьёй бюджета"""
-    supply_months = get_supply_months()  # годы/месяцы поставки
+    supply_months = get_supply_months(config.start_month)  # годы/месяцы поставки
     data = pd.read_excel(file_name, sheet_name='Sheet1')
     data['Дата поставки'] = data['Дата поставки'].dt.strftime('%Y/%m')  # преобразование дат в формат ГГГГ/ММ
     data.rename(columns={'Раздел ГКПЗ': 'Раздел_ГКПЗ'}, inplace=True)
-    data['Завод'].replace(['7Q71', '7Q81', '7QA1'], '7Q61', inplace=True)  # объединяем позиции для КТС
-    data['Завод'].replace(['7QC1', '7QF1'], '7QB1', inplace=True)  # объединяем позиции для ДТС
+    data['Завод'].replace(config.kts_factories, '7Q61', inplace=True)  # объединяем позиции для КТС
+    data['Завод'].replace(config.dts_factories, '7QB1', inplace=True)  # объединяем позиции для ДТС
     data['Раздел_ГКПЗ'].replace(['ИП ТПИР', 'ИП ПИП'], 'ИП_ТПИР', inplace=True)
     data['Завод'] = data['Наименование МВЗ'].map(config.crs).fillna(data['Завод'])  # распределение позиций ЦРС по заводам
     config.lot_name = data['Наименование лота'].iloc[0]  # получаем наименование лота и записываем его в конфиг-файл
@@ -35,6 +35,6 @@ def pivot_helper(file_name: str, tech_task_type: str) -> list:
     return pivots_list
 
 
-def get_supply_months(start_month: int = 12) -> list:
-    """Создаёт список дат поставки, по-умолчанию начиная с декабря предыдущего года - start_month = 12"""
+def get_supply_months(start_month: int) -> list:
+    """Создаёт список дат поставки"""
     return pd.date_range(start=f'{config.year - 1}/{start_month}', periods=13, freq='MS').to_pydatetime()

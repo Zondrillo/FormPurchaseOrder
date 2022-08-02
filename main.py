@@ -1,5 +1,4 @@
 import warnings
-import time
 
 from utilities.helpers import pivot_helper
 from configs import config
@@ -10,7 +9,6 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 if __name__ == "__main__":
-    start = time.time()
     common_tables = pivot_helper('export.xlsx', 'common')
     sep_tables = pivot_helper('export.xlsx', 'separated')
     """Формируем список с количеством продукции для каждого бюджета и для каждого завода. Результатом является список 
@@ -22,4 +20,3 @@ if __name__ == "__main__":
         FormTechTaskComm(common_tables[i], quantity_budget[i]).form()
     for sep_table in sep_tables:  # формирует раздельные ТЗ
         FormTechTaskSep(sep_table).form()
-    print('Lead time: {:.2f} secs.'.format(time.time() - start))

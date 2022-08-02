@@ -20,6 +20,7 @@
 ---
 
 ### Зависимости
+* [Python](https://www.python.org/downloads/) >= 3.8.5
 * [pandas](https://pandas.pydata.org/)
 * [numpy](https://numpy.org/)
 * [xlsxwriter](https://xlsxwriter.readthedocs.io/)

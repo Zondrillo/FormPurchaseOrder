@@ -23,7 +23,7 @@ class FormTechTaskSep:
         self.final_ws.fit_to_pages(1, 0)  # вписать все столбцы на одну страницу
         self.final_ws.set_zoom(60)  # установить масштаб 60%
 
-    def big_table(self) -> list[list]:
+    def big_table(self) -> list:
         """Получает все необходимые данные из сводной таблицы"""
         lst = []
         for index, row in enumerate(self.temp_ws.iter_rows(
@@ -75,7 +75,7 @@ class FormTechTaskSep:
         for element in config.head:
             self.final_ws.merge_range(5, col_head, 6, col_head, element, merge_format1)
             col_head += 1
-        months = get_supply_months()
+        months = get_supply_months(config.start_month)
         col_month = 7
         for month in months:
             self.final_ws.write_datetime(6, col_month, month, rotate)

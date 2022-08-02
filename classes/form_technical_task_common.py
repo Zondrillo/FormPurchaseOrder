@@ -24,7 +24,7 @@ class FormTechTaskComm:
         self.final_ws.fit_to_pages(1, 0)  # вписать все столбцы на одну страницу
         self.final_ws.set_zoom(60)  # установить масштаб 60%
 
-    def big_table(self) -> list[list]:
+    def big_table(self) -> list:
         """Получает все необходимые данные из сводной таблицы"""
         lst = []
         i = 1
@@ -39,7 +39,7 @@ class FormTechTaskComm:
         [element.insert(5, None) for element in lst]  # вставляет пустой столбец для технических требований
         return lst
 
-    def make_middle(self, lst_data: list) -> tuple[int, set]:
+    def make_middle(self, lst_data: list) -> tuple:
         """Добавляет данные в таблицу 1 ТЗ"""
         r_num = 8
         format_pivot_table = self.final_wb.add_format(config.format_pivot_table)
@@ -101,7 +101,7 @@ class FormTechTaskComm:
         for element in config.head:
             self.final_ws.merge_range(5, col_head, 6, col_head, element, merge_format1)
             col_head += 1
-        months = get_supply_months()
+        months = get_supply_months(config.start_month)
         col_month = 7
         for month in months:
             self.final_ws.write_datetime(6, col_month, month, rotate)
