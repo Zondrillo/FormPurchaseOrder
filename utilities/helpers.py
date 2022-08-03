@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from pymorphy3 import MorphAnalyzer
 
 from configs import config
 
@@ -38,3 +39,10 @@ def pivot_helper(file_name: str, tech_task_type: str) -> list:
 def get_supply_months(start_month: int) -> list:
     """Создаёт список дат поставки"""
     return pd.date_range(start=f'{config.year - 1}/{start_month}', periods=13, freq='MS').to_pydatetime()
+
+
+def get_words_in_genitive_case(words: str) -> str:
+    """Преобразует слова в предложении в родительный падеж"""
+    morph = MorphAnalyzer()
+    words_in_genitive_case = [morph.parse(word)[0].inflect({'gent'}).word for word in words.split()]
+    return ' '.join(words_in_genitive_case)

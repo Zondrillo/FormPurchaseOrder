@@ -25,3 +25,5 @@
 * [numpy](https://numpy.org/)
 * [xlsxwriter](https://xlsxwriter.readthedocs.io/)
 * [openpyxl](https://openpyxl.readthedocs.io/en/stable/)
+* [pymorphy3](https://github.com/no-plagiarism/pymorphy3)
+* [pymorphy3-dicts-ru](https://pypi.org/project/pymorphy3-dicts-ru)
