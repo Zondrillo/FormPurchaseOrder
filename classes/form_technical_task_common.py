@@ -5,7 +5,7 @@ from openpyxl import load_workbook
 from pandas import DataFrame
 
 from configs import config, texts
-from utilities.helpers import get_supply_months, get_words_in_genitive_case
+from utilities.helpers import get_supply_months
 
 
 class FormTechTaskComm:
@@ -95,9 +95,7 @@ class FormTechTaskComm:
         self.final_ws.write('U1', 'Приложение № 2 к Приказу НФ "ПАО "Т Плюс"', format_head)
         self.final_ws.write('U2', '№___________________________________________ от ____________________________',
                             format_head)
-        self.final_ws.merge_range('A4:U4',
-                                  f'Техническое задание на поставку {get_words_in_genitive_case(config.lot_name)}',
-                                  merge_format2)
+        self.final_ws.merge_range('A4:U4', 'Техническое задание на поставку ', merge_format2)
         self.final_ws.merge_range('A5:C5', 'Таблица 1', merge_format3)
         col_head = 0
         for element in config.head:
