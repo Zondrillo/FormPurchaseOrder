@@ -101,7 +101,7 @@ class FormTechTaskComm:
         for element in config.head:
             self.final_ws.merge_range(5, col_head, 6, col_head, element, merge_format1)
             col_head += 1
-        months = get_supply_months(config.start_month)
+        months = get_supply_months()
         col_month = 7
         for month in months:
             self.final_ws.write_datetime(6, col_month, month, rotate)
