@@ -11,6 +11,7 @@
  - classes
    - form_technical_task_common.py - формирует общие ТЗ
    - form_technical_task_sep.py - формирует раздельные ТЗ
+   - base_class.py - базовый класс, от которого наследуются классы, указанные выше
  - configs
    - config.py - конфигурационный файл
    - texts.py - файл с текстовками

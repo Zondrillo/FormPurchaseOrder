@@ -10,6 +10,7 @@ def pivot_helper(file_name: str, tech_task_type: str) -> list:
     data.rename(columns={'Раздел ГКПЗ': 'Раздел_ГКПЗ'}, inplace=True)
     data['Завод'].replace(config.kts_factories, '7Q61', inplace=True)  # объединяем позиции для КТС
     data['Завод'].replace(config.dts_factories, '7QB1', inplace=True)  # объединяем позиции для ДТС
+    data['Раздел_ГКПЗ'].replace(config.repair_budget, 'РЕМОНТ', inplace=True)
     data['Раздел_ГКПЗ'].replace(config.exploitation_budget, 'ЭКСПЛУАТАЦИЯ', inplace=True)
     data['Раздел_ГКПЗ'].replace(config.investments_budget, 'ИП_ТПИР', inplace=True)
     data['Завод'] = data['Наименование МВЗ'].map(config.crs).fillna(data['Завод'])  # распределение позиций ЦРС по заводам
