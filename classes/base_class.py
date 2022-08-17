@@ -10,16 +10,16 @@ from utilities.helpers import get_supply_months
 
 class BaseClass:
 
-    def __init__(self, some_table: DataFrame):
+    def __init__(self, pivot_table: DataFrame):
         self.file_path = tf.mktemp(suffix='.xlsx',
                                    dir='')  # создаём временный файл для записи сводной таблицы одного завода
-        some_table.to_excel(self.file_path, merge_cells=False)  # преобразовываем сводную таблицу в формат excel
+        pivot_table.to_excel(self.file_path, merge_cells=False)  # преобразовываем сводную таблицу в формат excel
         self.temp_wb = load_workbook(filename=self.file_path,
                                      data_only=True)  # получаем данные из excel-файла со сводной таблицей
         self.temp_ws = self.temp_wb.active  # выбираем единственный временный лист в excel-файле
         self.factory_id = self.temp_ws['B2'].value  # получаем id завода, с которым работаем в данный момент
         self.budget_name = self.temp_ws['A2'].value  # получаем раздел ГКПЗ с которым работаем в данный момент
-        self.final_wb = xl.Workbook() # создаём конечный excel-файл, в который будем записывать данные
+        self.final_wb = xl.Workbook()  # создаём конечный excel-файл, в который будем записывать данные
         self.final_ws = self.final_wb.add_worksheet()  # добавляем лист, в который будем записывать данные
         self.final_ws.set_landscape()  # альбомная ориентация
         self.final_ws.set_paper(9)  # формат А4
@@ -46,7 +46,7 @@ class BaseClass:
         self.final_ws.merge_range('A4:U4', f'Техническое задание на поставку {config.lot_name}', merge_format2)
         self.final_ws.merge_range('A5:C5', 'Таблица 1', merge_format3)
         col_head = 0
-        for element in config.head:
+        for element in config.tech_task_head:
             self.final_ws.merge_range(5, col_head, 6, col_head, element, merge_format1)
             col_head += 1
         months = get_supply_months()

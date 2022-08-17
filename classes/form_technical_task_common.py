@@ -6,9 +6,9 @@ from configs import config, texts
 
 class FormTechTaskComm(BaseClass):
 
-    def __init__(self, some_table: DataFrame, some_list: list):
-        super().__init__(some_table)
-        self.some_list = some_list  # номера строк для подсчёта итога по станции/сетям
+    def __init__(self, pivot_table: DataFrame, row_numbers_list: list):
+        super().__init__(pivot_table)
+        self.row_numbers_list = row_numbers_list  # номера строк для подсчёта итога по станции/сетям
         self.final_wb.filename = f'ТЗ_{self.budget_name}_{config.lot_name}_Общее.xlsx'
         self.final_ws.name = f'{self.budget_name}'  # добавляет лист, в который будем записывать данные
 
@@ -19,7 +19,7 @@ class FormTechTaskComm(BaseClass):
         j = 0
         for row in self.temp_ws.iter_rows(min_row=2, max_row=self.temp_ws.max_row, min_col=2, max_col=19):
             lst.append([i] + [cell.value for cell in row])
-            if i < self.some_list[j]:
+            if i < self.row_numbers_list[j]:
                 i += 1
             else:
                 i = 1
@@ -45,11 +45,11 @@ class FormTechTaskComm(BaseClass):
             self.final_ws.write_formula(r_num - 1, 6, f'=SUM(H{r_num}:T{r_num})', quantity_format)
             self.final_ws.write_row(f'H{r_num}', row[7:], quantity_format)
             self.final_ws.write_string(f'U{r_num}', texts.addresses[f'{factory_id}'], format_pivot_table)
-            if row[0] == self.some_list[k]:
+            if row[0] == self.row_numbers_list[k]:
                 self.final_ws.merge_range(r_num, 0, r_num, 5, texts.totals[f'{factory_id}'], format_total_text)
                 for cell in config.cells:
                     self.final_ws.write_formula(f'{cell}{r_num + 1}',
-                                                f'=SUM({cell}{r_num - self.some_list[k] + 1}:{cell}{r_num})',
+                                                f'=SUM({cell}{r_num - self.row_numbers_list[k] + 1}:{cell}{r_num})',
                                                 format_total_num)
                 r_num += 1
                 k += 1
@@ -59,7 +59,7 @@ class FormTechTaskComm(BaseClass):
         for cell in config.cells:
             next_total_row_number = 8
             formula_constructor = '='
-            for index, total_row_number in enumerate(self.some_list):
+            for index, total_row_number in enumerate(self.row_numbers_list):
                 next_total_row_number += total_row_number
                 formula_constructor += f'{cell}{next_total_row_number + index}+'
             self.final_ws.write_formula(f'{cell}{r_num}', formula_constructor[:-1], format_total_num)
