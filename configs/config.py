@@ -1,7 +1,7 @@
 sap_import_filename = 'export.xlsx'  # название файла выгрузки из SAP
 
 factories = ('7Q11', '7Q31', '7Q41', '7Q61', '7Q91', '7QB1')  # коды грузополучателей
-budgets = ('РЕМОНТ', 'ЭКСПЛУАТАЦИЯ', 'ИП_ТПИР')  # перечень статей бюджета
+budgets = ('РЕМОНТ', 'ЭКСПЛУАТАЦИЯ', 'ИНВЕСТИЦИИ')  # перечень статей бюджета
 
 kts_factories = ['7Q71', '7Q81', '7QA1']  # список заводов КТС, которые нужно унифицировать, т.е. заменить на 7Q61
 dts_factories = ['7QC1', '7QF1']  # список заводов ДТС, которые нужно унифицировать, т.е. заменить на 7QB1
@@ -121,11 +121,25 @@ nmp_info_columns_name_format.update(text_wrap=True)
 
 """Форматы для таблицы с данными НМЦ"""
 nmp_info_num_format = dict(nmp_info_common_format)
+nmp_info_total_string_format = dict(nmp_info_common_format)
 nmp_info_total_num_format = dict(nmp_info_common_format)
+nmp_info_total_quantity_format = dict(nmp_info_common_format)
+nmp_info_budget_string_total_format = dict(nmp_info_common_format)
 nmp_info_budget_total_format = dict(nmp_info_common_format)
+nmp_info_budget_quantity_total_format = dict(nmp_info_common_format)
+nmp_info_global_string_total_format = dict(nmp_info_common_format)
 nmp_info_global_total_format = dict(nmp_info_common_format)
+nmp_info_global_quantity_total_format = dict(nmp_info_common_format)
+nmp_info_quantity_format = dict(nmp_info_common_format)
 
 nmp_info_num_format.update(num_format='#,##0.00')
+nmp_info_total_string_format.update(align='left', bold=True)
 nmp_info_total_num_format.update(num_format='#,##0.00', bold=True)
+nmp_info_total_quantity_format.update(num_format='#,###0.000', bold=True)
+nmp_info_budget_string_total_format.update(align='left', bold=True, font_size=12)
 nmp_info_budget_total_format.update(num_format='#,##0.00', bold=True, font_size=12)
+nmp_info_budget_quantity_total_format.update(num_format='#,###0.000', bold=True, font_size=12)
+nmp_info_global_string_total_format.update(align='left', bold=True, font_size=14)
 nmp_info_global_total_format.update(num_format='#,##0.00', bold=True, font_size=14)
+nmp_info_global_quantity_total_format.update(num_format='#,###0.000', bold=True, font_size=14)
+nmp_info_quantity_format.update(num_format='#,###0.000')

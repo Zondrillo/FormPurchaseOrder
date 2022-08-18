@@ -46,6 +46,7 @@ class FormNmpInfo:
         num_format = self.final_wb.add_format(config.nmp_info_num_format)
         total_num_format = self.final_wb.add_format(config.nmp_info_total_num_format)
         position_number_format = self.final_wb.add_format(config.nmp_info_common_format)
+        quantity_format = self.final_wb.add_format(config.nmp_info_quantity_format)
         for table in self.pivot_tables_list:  # Итерация по бюджетам
             self.factory_total_rows_numbers = []  # список с номерами строк итоговых значений по заводам
             self.current_budget = table.index.get_level_values('Раздел_ГКПЗ')[0]
@@ -70,9 +71,11 @@ class FormNmpInfo:
                     self.counter = 1
                 price_with_vat = row[0][4] * (100 + config.vat_rate) / 100  # цена с НДС
                 item_cost = price_with_vat * row[1]  # стоимость одной позиции с НДС
-                line = list(row[0][2:]) + [price_with_vat] + [row[1]] + [item_cost]  # формирует строку с данными
-                self.final_ws.write_number(f'A{self.row_number}', self.counter, position_number_format)
-                self.final_ws.write_row(f'B{self.row_number}', line, num_format)
+                line = list(row[0][2:]) + [price_with_vat]  # формирует строку с данными
+                self.final_ws.write_number(f'A{self.row_number}', self.counter, position_number_format)  # № позиции
+                self.final_ws.write_row(f'B{self.row_number}', line, num_format)  # наименование - начальная цена
+                self.final_ws.write_number(f'F{self.row_number}', row[1], quantity_format)  # количество
+                self.final_ws.write_number(f'G{self.row_number}', item_cost, num_format)  # стоимость позиции с НДС
                 self.row_number += 1
                 self.counter += 1
             self.factory_total_rows_numbers.append(self.row_number)
@@ -80,39 +83,44 @@ class FormNmpInfo:
             """Записывает итоги по текущему бюджету"""
             self.write_factory_totals()
             self.row_number += 1
-            self.write_budget_totals('subtotals')
+            self.write_budget_or_global_totals('subtotals')
             self.row_number += 1
         """Записывает общие итоги по всем бюджетам"""
-        self.write_budget_totals('global_totals')
+        self.write_budget_or_global_totals('global_totals')
         self.final_wb.close()
 
     def write_factory_totals(self) -> None:
         """Добавляет строки с итогами по каждой станции/сетям"""
+        total_string_format = self.final_wb.add_format(config.nmp_info_total_string_format)
         total_num_format = self.final_wb.add_format(config.nmp_info_total_num_format)
+        total_quantity_format = self.final_wb.add_format(config.nmp_info_total_quantity_format)
         self.final_ws.merge_range(f'A{self.row_number}:E{self.row_number}', texts.totals[self.current_factory],
-                                  total_num_format)
+                                  total_string_format)
         self.final_ws.write_formula(f'F{self.row_number}',
                                     f'=SUM(F{self.row_number - 1}:F{self.row_number - self.counter + 1})',
-                                    total_num_format)
+                                    total_quantity_format)
         self.final_ws.write_formula(f'G{self.row_number}',
                                     f'=SUM(G{self.row_number - 1}:G{self.row_number - self.counter + 1})',
                                     total_num_format)
 
-    def write_budget_totals(self, total_type: str) -> None:
+    def write_budget_or_global_totals(self, total_type: str) -> None:
         """Записывает итоги по текущему бюджету или общие итоги по всем бюджетам"""
         if total_type == 'subtotals':
+            string_format = self.final_wb.add_format(config.nmp_info_budget_string_total_format)
             total_format = self.final_wb.add_format(config.nmp_info_budget_total_format)
+            quantity_format = self.final_wb.add_format(config.nmp_info_budget_quantity_total_format)
             total_rows_numbers = self.factory_total_rows_numbers
             data_string = f'Итого по бюджету "{self.current_budget}"'
         else:
+            string_format = self.final_wb.add_format(config.nmp_info_global_string_total_format)
             total_format = self.final_wb.add_format(config.nmp_info_global_total_format)
+            quantity_format = self.final_wb.add_format(config.nmp_info_global_quantity_total_format)
             total_rows_numbers = self.budgets_total_rows_numbers
             data_string = 'Итого по всем бюджетам'
-        self.final_ws.merge_range(f'A{self.row_number}:E{self.row_number}',
-                                  data_string, total_format)
+        self.final_ws.merge_range(f'A{self.row_number}:E{self.row_number}', data_string, string_format)
         total_quantity_formula = "+".join([f'F{row_number}' for row_number in total_rows_numbers])
         total_cost_formula = "+".join([f'G{row_number}' for row_number in total_rows_numbers])
-        self.final_ws.write_formula(f'F{self.row_number}', total_quantity_formula, total_format)
+        self.final_ws.write_formula(f'F{self.row_number}', total_quantity_formula, quantity_format)
         self.final_ws.write_formula(f'G{self.row_number}', total_cost_formula, total_format)
 
     def form(self) -> None:

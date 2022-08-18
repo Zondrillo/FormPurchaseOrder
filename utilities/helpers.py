@@ -12,7 +12,7 @@ def pivot_helper(file_name: str, form_type: str) -> list:
     data['Завод'].replace(config.dts_factories, '7QB1', inplace=True)  # объединяем позиции для ДТС
     data['Раздел_ГКПЗ'].replace(config.repair_budget, 'РЕМОНТ', inplace=True)
     data['Раздел_ГКПЗ'].replace(config.exploitation_budget, 'ЭКСПЛУАТАЦИЯ', inplace=True)
-    data['Раздел_ГКПЗ'].replace(config.investments_budget, 'ИП_ТПИР', inplace=True)
+    data['Раздел_ГКПЗ'].replace(config.investments_budget, 'ИНВЕСТИЦИИ', inplace=True)
     data['Завод'] = data['Наименование МВЗ'].map(config.crs).fillna(data['Завод'])  # распределение позиций ЦРС по заводам
     config.lot_name = data['Наименование лота'].iloc[0].strip()  # получаем наименование лота и записываем его в конфиг-файл
     supply_months = get_supply_months()  # годы/месяцы поставки
