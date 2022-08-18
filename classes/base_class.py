@@ -11,6 +11,8 @@ from utilities.helpers import get_supply_months
 class BaseClass:
 
     def __init__(self, pivot_table: DataFrame):
+        self.row_number = 8
+        self.table_data = []
         self.file_path = tf.mktemp(suffix='.xlsx',
                                    dir='')  # создаём временный файл для записи сводной таблицы одного завода
         pivot_table.to_excel(self.file_path, merge_cells=False)  # преобразовываем сводную таблицу в формат excel
@@ -40,6 +42,7 @@ class BaseClass:
         self.final_ws.set_column('F:F', 9.5)
         self.final_ws.set_column('G:G', 18)
         self.final_ws.set_column('H:T', 15)
+        self.final_ws.set_column('U:U', 46)
         self.final_ws.write('U1', 'Приложение № 2 к Приказу НФ "ПАО "Т Плюс"', format_head)
         self.final_ws.write('U2', '№___________________________________________ от ____________________________',
                             format_head)
@@ -57,59 +60,67 @@ class BaseClass:
         self.final_ws.merge_range('H6:T6', 'Срок поставки', merge_format1)
         self.final_ws.merge_range('U6:U7', 'Грузополучатель', merge_format1)
 
-    def make_tail(self, row_num: int) -> None:
+    def make_tail(self) -> None:
         """Вставляет таблицу № 2 в ТЗ"""
+        self.row_number += 2
         merge_format1 = self.final_wb.add_format(config.merge_format3)
         merge_format2 = self.final_wb.add_format(config.merge_format1)
         self.merge_format3 = self.final_wb.add_format(config.merge_format4)
-        self.final_ws.merge_range(f'A{row_num}:C{row_num}', 'Таблица 2', merge_format1)
-        self.final_ws.write_string(f'A{row_num + 1}', '№ п/п', merge_format2)
-        self.final_ws.merge_range(f'B{row_num + 1}:D{row_num + 1}', 'Показатель', merge_format2)
-        self.final_ws.merge_range(f'E{row_num + 1}:U{row_num + 1}', 'Описание', merge_format2)
-        self.final_ws.merge_range(f'A{row_num + 2}:A{row_num + 6}', 1, merge_format2)
-        self.final_ws.merge_range(f'B{row_num + 2}:D{row_num + 6}', texts.supply_conditions_title, self.merge_format3)
-        self.final_ws.merge_range(f'E{row_num + 2}:U{row_num + 2}', texts.supply_conditions_desc1, self.merge_format3)
-        self.final_ws.set_row(row_num + 1, 60)
-        self.final_ws.merge_range(f'E{row_num + 4}:U{row_num + 4}', texts.supply_conditions_desc3, self.merge_format3)
-        self.final_ws.merge_range(f'E{row_num + 5}:U{row_num + 5}', texts.supply_conditions_desc4, self.merge_format3)
-        self.final_ws.set_row(row_num + 4, 148.20)
-        self.final_ws.merge_range(f'E{row_num + 6}:U{row_num + 6}', texts.supply_conditions_desc5, self.merge_format3)
-        self.final_ws.merge_range(f'A{row_num + 7}:A{row_num + 10}', 2, merge_format2)
-        self.final_ws.merge_range(f'B{row_num + 7}:D{row_num + 10}', texts.quality_requirements_title,
+        self.final_ws.merge_range(f'A{self.row_number}:C{self.row_number}', 'Таблица 2', merge_format1)
+        self.final_ws.write_string(f'A{self.row_number + 1}', '№ п/п', merge_format2)
+        self.final_ws.merge_range(f'B{self.row_number + 1}:D{self.row_number + 1}', 'Показатель', merge_format2)
+        self.final_ws.merge_range(f'E{self.row_number + 1}:U{self.row_number + 1}', 'Описание', merge_format2)
+        self.final_ws.merge_range(f'A{self.row_number + 2}:A{self.row_number + 6}', 1, merge_format2)
+        self.final_ws.merge_range(f'B{self.row_number + 2}:D{self.row_number + 6}', texts.supply_conditions_title,
                                   self.merge_format3)
-        self.final_ws.merge_range(f'E{row_num + 7}:U{row_num + 7}', texts.quality_requirements_desc1,
+        self.final_ws.merge_range(f'E{self.row_number + 2}:U{self.row_number + 2}', texts.supply_conditions_desc1,
                                   self.merge_format3)
-        self.final_ws.merge_range(f'E{row_num + 8}:U{row_num + 8}', texts.quality_requirements_desc2,
+        self.final_ws.set_row(self.row_number + 1, 60)
+        self.final_ws.merge_range(f'E{self.row_number + 4}:U{self.row_number + 4}', texts.supply_conditions_desc3,
                                   self.merge_format3)
-        self.final_ws.set_row(row_num + 7, 40)
-        self.final_ws.merge_range(f'E{row_num + 9}:U{row_num + 9}', texts.quality_requirements_desc3,
+        self.final_ws.merge_range(f'E{self.row_number + 5}:U{self.row_number + 5}', texts.supply_conditions_desc4,
                                   self.merge_format3)
-        self.final_ws.merge_range(f'E{row_num + 10}:U{row_num + 10}', 'Иное: нет', self.merge_format3)
-        self.final_ws.write_number(f'A{row_num + 11}', 3, merge_format2)
-        self.final_ws.merge_range(f'B{row_num + 11}:D{row_num + 11}', texts.confirmation_of_compliance_title,
+        self.final_ws.set_row(self.row_number + 4, 148.20)
+        self.final_ws.merge_range(f'E{self.row_number + 6}:U{self.row_number + 6}', texts.supply_conditions_desc5,
                                   self.merge_format3)
-        self.final_ws.merge_range(f'E{row_num + 11}:U{row_num + 11}', texts.confirmation_of_compliance_desc1,
+        self.final_ws.merge_range(f'A{self.row_number + 7}:A{self.row_number + 10}', 2, merge_format2)
+        self.final_ws.merge_range(f'B{self.row_number + 7}:D{self.row_number + 10}', texts.quality_requirements_title,
                                   self.merge_format3)
-        self.final_ws.set_row(row_num + 10, 81)
-        self.final_ws.merge_range(f'A{row_num + 12}:A{row_num + 14}', 4, merge_format2)
-        self.final_ws.merge_range(f'B{row_num + 12}:D{row_num + 14}', texts.safety_requirements_title,
+        self.final_ws.merge_range(f'E{self.row_number + 7}:U{self.row_number + 7}', texts.quality_requirements_desc1,
                                   self.merge_format3)
-        self.final_ws.merge_range(f'E{row_num + 12}:U{row_num + 12}', texts.safety_requirements_desc1,
+        self.final_ws.merge_range(f'E{self.row_number + 8}:U{self.row_number + 8}', texts.quality_requirements_desc2,
                                   self.merge_format3)
-        self.final_ws.merge_range(f'E{row_num + 13}:U{row_num + 13}', texts.safety_requirements_desc2,
+        self.final_ws.set_row(self.row_number + 7, 40)
+        self.final_ws.merge_range(f'E{self.row_number + 9}:U{self.row_number + 9}', texts.quality_requirements_desc3,
                                   self.merge_format3)
-        self.final_ws.merge_range(f'E{row_num + 14}:U{row_num + 14}', 'Иное: нет', self.merge_format3)
-        self.final_ws.merge_range(f'A{row_num + 15}:A{row_num + 18}', 5, merge_format2)
-        self.final_ws.merge_range(f'B{row_num + 15}:C{row_num + 18}', 'Иные требования', self.merge_format3)
-        self.final_ws.write_string(f'D{row_num + 15}', 'Эквивалент', self.merge_format3)
-        self.final_ws.write_string(f'D{row_num + 16}', 'Толеранс (+/-), %', self.merge_format3)
-        self.final_ws.write_string(f'D{row_num + 17}', 'Срок службы (расчетный ресурс)', self.merge_format3)
-        self.final_ws.write_string(f'D{row_num + 18}', 'Другое', self.merge_format3)
-        self.final_ws.merge_range(f'E{row_num + 15}:U{row_num + 15}', texts.equivalent_desc, self.merge_format3)
-        self.final_ws.set_row(row_num + 14, 42.6)
-        self.final_ws.merge_range(f'E{row_num + 16}:U{row_num + 16}', 'Нет', self.merge_format3)
-        self.final_ws.merge_range(f'E{row_num + 17}:U{row_num + 17}', None, self.merge_format3)
-        self.final_ws.merge_range(f'E{row_num + 18}:U{row_num + 18}', 'Нет', self.merge_format3)
+        self.final_ws.merge_range(f'E{self.row_number + 10}:U{self.row_number + 10}', 'Иное: нет', self.merge_format3)
+        self.final_ws.write_number(f'A{self.row_number + 11}', 3, merge_format2)
+        self.final_ws.merge_range(f'B{self.row_number + 11}:D{self.row_number + 11}',
+                                  texts.confirmation_of_compliance_title, self.merge_format3)
+        self.final_ws.merge_range(f'E{self.row_number + 11}:U{self.row_number + 11}',
+                                  texts.confirmation_of_compliance_desc1, self.merge_format3)
+        self.final_ws.set_row(self.row_number + 10, 81)
+        self.final_ws.merge_range(f'A{self.row_number + 12}:A{self.row_number + 14}', 4, merge_format2)
+        self.final_ws.merge_range(f'B{self.row_number + 12}:D{self.row_number + 14}', texts.safety_requirements_title,
+                                  self.merge_format3)
+        self.final_ws.merge_range(f'E{self.row_number + 12}:U{self.row_number + 12}', texts.safety_requirements_desc1,
+                                  self.merge_format3)
+        self.final_ws.merge_range(f'E{self.row_number + 13}:U{self.row_number + 13}', texts.safety_requirements_desc2,
+                                  self.merge_format3)
+        self.final_ws.merge_range(f'E{self.row_number + 14}:U{self.row_number + 14}', 'Иное: нет', self.merge_format3)
+        self.final_ws.merge_range(f'A{self.row_number + 15}:A{self.row_number + 18}', 5, merge_format2)
+        self.final_ws.merge_range(f'B{self.row_number + 15}:C{self.row_number + 18}', 'Иные требования',
+                                  self.merge_format3)
+        self.final_ws.write_string(f'D{self.row_number + 15}', 'Эквивалент', self.merge_format3)
+        self.final_ws.write_string(f'D{self.row_number + 16}', 'Толеранс (+/-), %', self.merge_format3)
+        self.final_ws.write_string(f'D{self.row_number + 17}', 'Срок службы (расчетный ресурс)', self.merge_format3)
+        self.final_ws.write_string(f'D{self.row_number + 18}', 'Другое', self.merge_format3)
+        self.final_ws.merge_range(f'E{self.row_number + 15}:U{self.row_number + 15}', texts.equivalent_desc,
+                                  self.merge_format3)
+        self.final_ws.set_row(self.row_number + 14, 42.6)
+        self.final_ws.merge_range(f'E{self.row_number + 16}:U{self.row_number + 16}', 'Нет', self.merge_format3)
+        self.final_ws.merge_range(f'E{self.row_number + 17}:U{self.row_number + 17}', None, self.merge_format3)
+        self.final_ws.merge_range(f'E{self.row_number + 18}:U{self.row_number + 18}', 'Нет', self.merge_format3)
 
     def close_and_clear(self):
         self.temp_wb.close()

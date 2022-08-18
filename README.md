@@ -16,7 +16,7 @@
    - form_technical_task_common.py - формирует общие ТЗ
    - form_technical_task_sep.py - формирует раздельные ТЗ
    - form_nmp_info.py - формирует сведения о НМЦ (начальные максимальные цены)
-   - base_class.py - базовый класс, от которого наследуются классы, указанные выше
+   - base_class.py - базовый класс, от которого наследуются классы form_technical_task_common & form_technical_task_sep
  - configs
    - config.py - конфигурационный файл
    - texts.py - файл с текстовками
