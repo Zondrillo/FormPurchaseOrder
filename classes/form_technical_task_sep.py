@@ -6,8 +6,8 @@ from configs import config, texts
 
 class FormTechTaskSep(BaseClass):
 
-    def __init__(self, some_table: DataFrame):
-        super().__init__(some_table)
+    def __init__(self, pivot_table: DataFrame):
+        super().__init__(pivot_table)
         self.final_wb.filename = f'ТЗ_{self.factory_id}_{self.budget_name}_{config.lot_name}.xlsx'
         self.final_ws.name = f'{self.factory_id}'  # добавляет лист, в который будем записывать данные
 
