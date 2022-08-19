@@ -4,7 +4,7 @@ import xlsxwriter as xl
 from openpyxl import load_workbook
 from pandas import DataFrame
 
-from configs import config, texts
+from configs import config, texts, cell_formats
 from utilities.helpers import get_supply_months
 
 
@@ -27,14 +27,6 @@ class BaseClass:
         self.final_ws.set_paper(9)  # формат А4
         self.final_ws.fit_to_pages(1, 0)  # вписать все столбцы на одну страницу
         self.final_ws.set_zoom(60)  # установить масштаб 60%
-
-    def make_head(self) -> None:
-        """Формирует шапку ТЗ"""
-        format_head = self.final_wb.add_format(config.format_head)
-        merge_format1 = self.final_wb.add_format(config.merge_format1)
-        merge_format2 = self.final_wb.add_format(config.merge_format2)
-        merge_format3 = self.final_wb.add_format(config.merge_format3)
-        rotate = self.final_wb.add_format(config.rotate_format)
         self.final_ws.set_column('A:A', 6)
         self.final_ws.set_column('B:C', 13.5)
         self.final_ws.set_column('D:D', 43)
@@ -43,6 +35,14 @@ class BaseClass:
         self.final_ws.set_column('G:G', 18)
         self.final_ws.set_column('H:T', 15)
         self.final_ws.set_column('U:U', 46)
+
+    def make_head(self) -> None:
+        """Формирует шапку ТЗ"""
+        format_head = self.final_wb.add_format(cell_formats.format_head)
+        merge_format1 = self.final_wb.add_format(cell_formats.merge_format1)
+        merge_format2 = self.final_wb.add_format(cell_formats.merge_format2)
+        merge_format3 = self.final_wb.add_format(cell_formats.merge_format3)
+        rotate = self.final_wb.add_format(cell_formats.rotate_format)
         self.final_ws.write('U1', 'Приложение № 2 к Приказу НФ "ПАО "Т Плюс"', format_head)
         self.final_ws.write('U2', '№___________________________________________ от ____________________________',
                             format_head)
@@ -63,9 +63,9 @@ class BaseClass:
     def make_tail(self) -> None:
         """Вставляет таблицу № 2 в ТЗ"""
         self.row_number += 2
-        merge_format1 = self.final_wb.add_format(config.merge_format3)
-        merge_format2 = self.final_wb.add_format(config.merge_format1)
-        self.merge_format3 = self.final_wb.add_format(config.merge_format4)
+        merge_format1 = self.final_wb.add_format(cell_formats.merge_format3)
+        merge_format2 = self.final_wb.add_format(cell_formats.merge_format1)
+        self.merge_format3 = self.final_wb.add_format(cell_formats.merge_format4)
         self.final_ws.merge_range(f'A{self.row_number}:C{self.row_number}', 'Таблица 2', merge_format1)
         self.final_ws.write_string(f'A{self.row_number + 1}', '№ п/п', merge_format2)
         self.final_ws.merge_range(f'B{self.row_number + 1}:D{self.row_number + 1}', 'Показатель', merge_format2)

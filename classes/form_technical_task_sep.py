@@ -1,7 +1,7 @@
 ﻿from pandas import DataFrame
 
 from classes.base_class import BaseClass
-from configs import config, texts
+from configs import config, texts, cell_formats
 
 
 class FormTechTaskSep(BaseClass):
@@ -20,10 +20,10 @@ class FormTechTaskSep(BaseClass):
 
     def make_middle(self) -> None:
         """Добавляет данные в таблицу 1 ТЗ"""
-        format_pivot_table = self.final_wb.add_format(config.format_pivot_table)
-        quantity_format = self.final_wb.add_format(config.quantity_format)
-        format_total_text = self.final_wb.add_format(config.format_total_text)
-        format_total_num = self.final_wb.add_format(config.format_total_num)
+        format_pivot_table = self.final_wb.add_format(cell_formats.format_pivot_table)
+        quantity_format = self.final_wb.add_format(cell_formats.quantity_format)
+        format_total_text = self.final_wb.add_format(cell_formats.format_total_text)
+        format_total_num = self.final_wb.add_format(cell_formats.format_total_num)
         for row in self.table_data:
             self.final_ws.write_row(f'A{self.row_number}', row[:6], format_pivot_table)
             self.final_ws.write_formula(f'G{self.row_number}', f'=SUM(H{self.row_number}:T{self.row_number})',
