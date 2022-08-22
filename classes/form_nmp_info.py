@@ -1,6 +1,6 @@
 import xlsxwriter as xl
 
-from configs import config, texts
+from configs import config, texts, cell_formats
 
 
 class FormNmpInfo:
@@ -19,13 +19,6 @@ class FormNmpInfo:
         self.final_ws.set_paper(9)  # формат А4
         self.final_ws.fit_to_pages(1, 0)  # вписать все столбцы на одну страницу
         self.final_ws.set_zoom(100)  # установить масштаб 100%
-
-    def make_head(self) -> None:
-        """Формирует шапку НМЦ"""
-        nmp_info_head_format = self.final_wb.add_format(config.nmp_info_head_format)
-        nmp_info_columns_name_format = self.final_wb.add_format(config.nmp_info_columns_name_format)
-        nmp_info_lot_name_format = self.final_wb.add_format(config.nmp_info_lot_name_format)
-        nmp_info_title_format = self.final_wb.add_format(config.nmp_info_title_format)
         self.final_ws.set_column('A:A', 8.3)
         self.final_ws.set_column('B:B', 46.8)
         self.final_ws.set_column('C:C', 10.67)
@@ -33,20 +26,26 @@ class FormNmpInfo:
         self.final_ws.set_column('E:E', 20.5)
         self.final_ws.set_column('F:F', 15.6)
         self.final_ws.set_column('G:G', 30)
+
+    def make_head(self) -> None:
+        """Формирует шапку НМЦ"""
+        nmp_info_head_format = self.final_wb.add_format(cell_formats.nmp_info_head_format)
+        nmp_info_columns_name_format = self.final_wb.add_format(cell_formats.nmp_info_columns_name_format)
+        nmp_info_lot_name_format = self.final_wb.add_format(cell_formats.nmp_info_lot_name_format)
+        nmp_info_title_format = self.final_wb.add_format(cell_formats.nmp_info_title_format)
         self.final_ws.write_string('G1', 'Приложение №2 к заявке на проведение закупки', nmp_info_head_format)
         self.final_ws.write_string('G2', '№___________________________________________ от ____________________________',
                                    nmp_info_head_format)
         self.final_ws.write_string('A4', texts.nmp_info_title, nmp_info_title_format)
         self.final_ws.write_string('A5', config.lot_name, nmp_info_lot_name_format)
-        for index, element in enumerate(config.nmp_info_head):
-            self.final_ws.write_string(6, index, element, nmp_info_columns_name_format)
+        self.final_ws.write_row('A7', config.nmp_info_head, nmp_info_columns_name_format)
 
     def fill_table(self) -> None:
         """Формирует таблицу с данными"""
-        num_format = self.final_wb.add_format(config.nmp_info_num_format)
-        total_num_format = self.final_wb.add_format(config.nmp_info_total_num_format)
-        position_number_format = self.final_wb.add_format(config.nmp_info_common_format)
-        quantity_format = self.final_wb.add_format(config.nmp_info_quantity_format)
+        num_format = self.final_wb.add_format(cell_formats.nmp_info_num_format)
+        total_num_format = self.final_wb.add_format(cell_formats.nmp_info_total_num_format)
+        position_number_format = self.final_wb.add_format(cell_formats.nmp_info_common_format)
+        quantity_format = self.final_wb.add_format(cell_formats.nmp_info_quantity_format)
         for table in self.pivot_tables_list:  # Итерация по бюджетам
             self.factory_total_rows_numbers = []  # список с номерами строк итоговых значений по заводам
             self.current_budget = table.index.get_level_values('Раздел_ГКПЗ')[0]
@@ -87,13 +86,12 @@ class FormNmpInfo:
             self.row_number += 1
         """Записывает общие итоги по всем бюджетам"""
         self.write_budget_or_global_totals('global_totals')
-        self.final_wb.close()
 
     def write_factory_totals(self) -> None:
         """Добавляет строки с итогами по каждой станции/сетям"""
-        total_string_format = self.final_wb.add_format(config.nmp_info_total_string_format)
-        total_num_format = self.final_wb.add_format(config.nmp_info_total_num_format)
-        total_quantity_format = self.final_wb.add_format(config.nmp_info_total_quantity_format)
+        total_string_format = self.final_wb.add_format(cell_formats.nmp_info_total_string_format)
+        total_num_format = self.final_wb.add_format(cell_formats.nmp_info_total_num_format)
+        total_quantity_format = self.final_wb.add_format(cell_formats.nmp_info_total_quantity_format)
         self.final_ws.merge_range(f'A{self.row_number}:E{self.row_number}', texts.totals[self.current_factory],
                                   total_string_format)
         self.final_ws.write_formula(f'F{self.row_number}',
@@ -106,15 +104,15 @@ class FormNmpInfo:
     def write_budget_or_global_totals(self, total_type: str) -> None:
         """Записывает итоги по текущему бюджету или общие итоги по всем бюджетам"""
         if total_type == 'subtotals':
-            string_format = self.final_wb.add_format(config.nmp_info_budget_string_total_format)
-            total_format = self.final_wb.add_format(config.nmp_info_budget_total_format)
-            quantity_format = self.final_wb.add_format(config.nmp_info_budget_quantity_total_format)
+            string_format = self.final_wb.add_format(cell_formats.nmp_info_budget_string_total_format)
+            total_format = self.final_wb.add_format(cell_formats.nmp_info_budget_total_format)
+            quantity_format = self.final_wb.add_format(cell_formats.nmp_info_budget_quantity_total_format)
             total_rows_numbers = self.factory_total_rows_numbers
             data_string = f'Итого по бюджету "{self.current_budget}"'
         else:
-            string_format = self.final_wb.add_format(config.nmp_info_global_string_total_format)
-            total_format = self.final_wb.add_format(config.nmp_info_global_total_format)
-            quantity_format = self.final_wb.add_format(config.nmp_info_global_quantity_total_format)
+            string_format = self.final_wb.add_format(cell_formats.nmp_info_global_string_total_format)
+            total_format = self.final_wb.add_format(cell_formats.nmp_info_global_total_format)
+            quantity_format = self.final_wb.add_format(cell_formats.nmp_info_global_quantity_total_format)
             total_rows_numbers = self.budgets_total_rows_numbers
             data_string = 'Итого по всем бюджетам'
         self.final_ws.merge_range(f'A{self.row_number}:E{self.row_number}', data_string, string_format)
@@ -127,3 +125,4 @@ class FormNmpInfo:
         """Формирует НМЦ"""
         self.make_head()
         self.fill_table()
+        self.final_wb.close()

@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from pandas import DataFrame
 
 from configs import config
 
@@ -42,6 +43,20 @@ def pivot_helper(file_name: str, form_type: str) -> list:
         pivots_list = [pt for factory in config.factories for budget in config.budgets
                        if (pt := pivoted_data.query(f'Завод == ["{factory}"] & Раздел_ГКПЗ == ["{budget}"]')).size != 0]
     return pivots_list
+
+
+def engagement_report_helper(file_name: str) -> DataFrame:
+    """Подготавливает таблицу с данными для отчёта по вовлечению"""
+    data = pd.read_excel(file_name, sheet_name='Sheet1')
+    data.sort_values(['Завод', 'Краткий текст позиции'], inplace=True)
+    data.reset_index(inplace=True)
+    data.index = data.index + 1  # номера строк теперь начинаются с 1, а не с 0
+    for letter in 'ABC':  # добавляет 3 пустых столбца между номером лота и № материала
+        data[letter] = ''
+    columns_titles = ['Завод', 'Номер лота', 'A', 'B', 'C', '№ материала', 'Краткий текст позиции', 'ЕИ',
+                      'Прогнозная цена', 'Количество']
+    data = data.reindex(columns=columns_titles)  # переставляет столбцы местами
+    return data
 
 
 def get_supply_months() -> list:

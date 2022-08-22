@@ -1,7 +1,7 @@
 ﻿from pandas import DataFrame
 
 from classes.base_class import BaseClass
-from configs import config, texts
+from configs import config, texts, cell_formats
 
 
 class FormTechTaskComm(BaseClass):
@@ -28,10 +28,10 @@ class FormTechTaskComm(BaseClass):
 
     def make_middle(self) -> None:
         """Добавляет данные в таблицу 1 ТЗ"""
-        format_pivot_table = self.final_wb.add_format(config.format_pivot_table)
-        quantity_format = self.final_wb.add_format(config.quantity_format)
-        format_total_text = self.final_wb.add_format(config.format_total_text)
-        format_total_num = self.final_wb.add_format(config.format_total_num)
+        format_pivot_table = self.final_wb.add_format(cell_formats.format_pivot_table)
+        quantity_format = self.final_wb.add_format(cell_formats.quantity_format)
+        format_total_text = self.final_wb.add_format(cell_formats.format_total_text)
+        format_total_num = self.final_wb.add_format(cell_formats.format_total_num)
         k = 0
         for row in self.table_data:
             factory_id = row[1]
