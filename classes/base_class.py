@@ -1,7 +1,4 @@
-import os
-import tempfile as tf
 import xlsxwriter as xl
-from openpyxl import load_workbook
 from pandas import DataFrame
 
 from configs import config, texts, cell_formats
@@ -12,15 +9,11 @@ class BaseClass:
 
     def __init__(self, pivot_table: DataFrame):
         self.row_number = 8
-        self.table_data = []
-        self.file_path = tf.mktemp(suffix='.xlsx',
-                                   dir='')  # создаём временный файл для записи сводной таблицы одного завода
-        pivot_table.to_excel(self.file_path, merge_cells=False)  # преобразовываем сводную таблицу в формат excel
-        self.temp_wb = load_workbook(filename=self.file_path,
-                                     data_only=True)  # получаем данные из excel-файла со сводной таблицей
-        self.temp_ws = self.temp_wb.active  # выбираем единственный временный лист в excel-файле
-        self.factory_id = self.temp_ws['B2'].value  # получаем id завода, с которым работаем в данный момент
-        self.budget_name = self.temp_ws['A2'].value  # получаем раздел ГКПЗ с которым работаем в данный момент
+        self.counter = 1  # счётчик для № позиции
+        self.pivot_table = pivot_table
+        self.pivot_table.fillna('', inplace=True)
+        self.budget_name = pivot_table.index.get_level_values('Раздел_ГКПЗ')[0]  # получаем раздел ГКПЗ с которым работаем в данный момент
+        self.current_factory = pivot_table.index.get_level_values('Завод')[0]  # получаем id завода, с которым работаем в данный момент
         self.final_wb = xl.Workbook()  # создаём конечный excel-файл, в который будем записывать данные
         self.final_ws = self.final_wb.add_worksheet()  # добавляем лист, в который будем записывать данные
         self.final_ws.set_landscape()  # альбомная ориентация
@@ -121,8 +114,3 @@ class BaseClass:
         self.final_ws.merge_range(f'E{self.row_number + 16}:U{self.row_number + 16}', 'Нет', self.merge_format3)
         self.final_ws.merge_range(f'E{self.row_number + 17}:U{self.row_number + 17}', None, self.merge_format3)
         self.final_ws.merge_range(f'E{self.row_number + 18}:U{self.row_number + 18}', 'Нет', self.merge_format3)
-
-    def close_and_clear(self):
-        self.temp_wb.close()
-        self.final_wb.close()
-        os.remove(self.file_path)

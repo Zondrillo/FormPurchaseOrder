@@ -11,17 +11,14 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 if __name__ == "__main__":
+    """Блок подготовки сводных таблиц"""
     common_tables = pivot_helper(config.sap_import_filename, 'common')
     sep_tables = pivot_helper(config.sap_import_filename, 'separated')
     nmp_info_tables = pivot_helper(config.sap_import_filename, 'nmp_info')
     engagement_report_table = engagement_report_helper(config.sap_import_filename)
-    """Формируем список с количеством продукции для каждого бюджета и для каждого завода. Результатом является список
-    с вложенными списками следующего вида [Бюджет[Кол-во продукции по заводам]]"""
-    quantity_budget = [[quantity for factory in config.factories
-                        if (quantity := common_table.query(f'Завод == ["{factory}"]').shape[0]) != 0]
-                       for common_table in common_tables]
-    for i in range(len(common_tables)):  # формирует общие ТЗ
-        FormTechTaskComm(common_tables[i], quantity_budget[i]).form()
+    """Блок формирования ТЗ, сведений о НМЦ и отчёта по вовлечению"""
+    for common_table in common_tables:
+        FormTechTaskComm(common_table).form()  # формирует общие ТЗ
     for sep_table in sep_tables:  # формирует раздельные ТЗ
         FormTechTaskSep(sep_table).form()
     FormNmpInfo(nmp_info_tables).form()  # формирует сведения о НМЦ

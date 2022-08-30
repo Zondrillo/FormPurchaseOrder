@@ -35,8 +35,10 @@ rotate_format.update(rotation=90, num_format='mmmm yyyy')  # поворот со
 
 """Форматы для таблицы №2"""
 merge_format4 = dict(tech_task_common_format)
+signatory_format = dict(tech_task_common_format)
 
 merge_format4.update(align='left', text_wrap=True)
+signatory_format.update(align='left', valign='bottom', bold=True, border=False)
 
 '----------------------------------------------------------------------------------------------------------------------'
 """Форматы ячеек НМЦ"""
