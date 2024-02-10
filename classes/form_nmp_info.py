@@ -13,7 +13,8 @@ class FormNmpInfo:
         self.factory_total_rows_numbers = []  # список с номерами строк итоговых значений по заводам
         self.budgets_total_rows_numbers = []  # список с номерами строк итоговых значений по бюджетам
         self.pivot_tables_list = pivot_tables_list
-        self.final_wb = xl.Workbook(f'2_Сведения_о_НМЦ_{config.lot_name}.xlsx')  # создаём конечный excel-файл
+        self.final_wb = xl.Workbook(f'{config.results_dir_name}/{config.lot_name}/2_Сведения_о_НМЦ_'
+                                    f'{config.lot_name}.xlsx')  # создаём конечный excel-файл
         self.final_ws = self.final_wb.add_worksheet()  # добавляем лист, в который будем записывать данные
         self.final_ws.set_portrait()  # книжная ориентация
         self.final_ws.set_paper(9)  # формат А4

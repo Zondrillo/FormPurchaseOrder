@@ -11,7 +11,8 @@ class FormTechTaskComm(BaseClass):
         self.factories_set = set()
         self.factories_set.add(self.current_factory)
         self.factory_total_rows_numbers = []  # список с номерами строк итоговых значений по заводам
-        self.final_wb.filename = f'ТЗ_{self.budget_name}_{config.lot_name}_Общее.xlsx'
+        self.final_wb.filename = f'{config.results_dir_name}/{config.lot_name}/ТЗ_{self.budget_name}_' \
+                                 f'{config.lot_name}_Общее.xlsx'
         self.final_ws.name = self.budget_name  # добавляет лист, в который будем записывать данные
 
     def make_middle(self) -> None:

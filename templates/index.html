@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Form Purchase Order</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+<img src="{{ url_for('static', filename='img/logo.png')}}">
+<br>
+<div class="container">
+    <div class="dropzone">
+        <div class="dz-message needsclick">
+            <h1>Перетащите файл или нажмите для загрузки</h1>
+        </div>
+    </div>
+</div>
+<br>
+<div class="container">
+    <button type="submit" id="download_btn" class="btn btn-success btn-lg" disabled onclick="window.open('download')">Скачать</button>
+</div>
+<script>
+$(document).ready(function(){
+    $(".dropzone").dropzone({
+      url: '/',
+      progressBarWidth: '100%',
+      maxFileSize: '5MB',
+      acceptedFiles: '.xls,.xlsx',
+      maxFiles: 5,
+      addRemoveLinks: true,
+      init: function () {
+        this.on("queuecomplete", function (file) {
+          $('#download_btn').prop("disabled", false);
+        });
+      }
+    })
+});
+</script>
+</body>
+</html>

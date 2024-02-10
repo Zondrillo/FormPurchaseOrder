@@ -8,7 +8,8 @@ class FormTechTaskSep(BaseClass):
 
     def __init__(self, pivot_table: DataFrame):
         super().__init__(pivot_table)
-        self.final_wb.filename = f'ТЗ_{self.current_factory}_{self.budget_name}_{config.lot_name}.xlsx'
+        self.final_wb.filename = f'{config.results_dir_name}/{config.lot_name}/ТЗ_{self.current_factory}_' \
+                                 f'{self.budget_name}_{config.lot_name}.xlsx'
         self.final_ws.name = self.current_factory  # добавляет лист, в который будем записывать данные
 
     def make_middle(self) -> None:
