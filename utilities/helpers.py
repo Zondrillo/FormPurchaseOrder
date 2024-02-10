@@ -20,7 +20,7 @@ def pivot_helper(file_name: str, form_type: str) -> list:
     empty_rows = [config.columns.copy() for _ in supply_months]
     for index in range(len(empty_rows)):
         empty_rows[index]['Дата поставки'] = supply_months[index]
-    data = data.append(empty_rows, ignore_index=True)  # фиксируем диапазон дат поставки
+    data = data._append(empty_rows, ignore_index=True)  # фиксируем диапазон дат поставки
     data['Дата поставки'] = data['Дата поставки'].dt.strftime('%Y/%m')  # преобразование дат в формат ГГГГ/ММ
     values_for_sort = ['Завод', 'Краткий текст позиции'] if form_type == 'common' or form_type == 'nmp_info' else [
         'Краткий текст позиции']
