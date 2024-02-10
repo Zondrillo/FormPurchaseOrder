@@ -1,3 +1,5 @@
+import os
+
 import xlsxwriter as xl
 from pandas import DataFrame
 
@@ -8,6 +10,8 @@ from utilities.helpers import get_supply_months
 class BaseClass:
 
     def __init__(self, pivot_table: DataFrame):
+        if not os.path.exists('result'):
+            os.mkdir('result')
         self.row_number = 8
         self.counter = 1  # счётчик для № позиции
         self.pivot_table = pivot_table
