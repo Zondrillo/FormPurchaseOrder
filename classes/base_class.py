@@ -3,7 +3,7 @@ import os
 import xlsxwriter as xl
 from pandas import DataFrame
 
-from configs import config, texts, cell_formats
+from configs import cell_formats, config, texts
 from utilities.helpers import get_supply_months
 
 
@@ -16,8 +16,10 @@ class BaseClass:
         self.counter = 1  # счётчик для № позиции
         self.pivot_table = pivot_table
         self.pivot_table.fillna('', inplace=True)
-        self.budget_name = pivot_table.index.get_level_values('Раздел_ГКПЗ')[0]  # получаем раздел ГКПЗ с которым работаем в данный момент
-        self.current_factory = pivot_table.index.get_level_values('Завод')[0]  # получаем id завода, с которым работаем в данный момент
+        # получаем раздел ГКПЗ с которым работаем в данный момент
+        self.budget_name = pivot_table.index.get_level_values('Раздел_ГКПЗ')[0]
+        # получаем id завода, с которым работаем в данный момент
+        self.current_factory = pivot_table.index.get_level_values('Завод')[0]
         self.final_wb = xl.Workbook()  # создаём конечный excel-файл, в который будем записывать данные
         self.final_ws = self.final_wb.add_worksheet()  # добавляем лист, в который будем записывать данные
         self.final_ws.set_landscape()  # альбомная ориентация
@@ -34,7 +36,7 @@ class BaseClass:
         self.final_ws.set_column('U:U', 46)
 
     def make_head(self) -> None:
-        """Формирует шапку ТЗ"""
+        """Формирует шапку ТЗ."""
         format_head = self.final_wb.add_format(cell_formats.format_head)
         merge_format1 = self.final_wb.add_format(cell_formats.merge_format1)
         merge_format2 = self.final_wb.add_format(cell_formats.merge_format2)
@@ -58,7 +60,7 @@ class BaseClass:
         self.final_ws.merge_range('U6:U7', 'Грузополучатель', merge_format1)
 
     def make_tail(self) -> None:
-        """Вставляет таблицу № 2 в ТЗ"""
+        """Вставляет таблицу № 2 в ТЗ."""
         self.row_number += 2
         merge_format1 = self.final_wb.add_format(cell_formats.merge_format3)
         merge_format2 = self.final_wb.add_format(cell_formats.merge_format1)

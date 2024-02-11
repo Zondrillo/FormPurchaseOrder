@@ -1,7 +1,7 @@
 ﻿from pandas import DataFrame
 
 from classes.base_class import BaseClass
-from configs import config, texts, cell_formats
+from configs import cell_formats, config, texts
 
 
 class FormTechTaskComm(BaseClass):
@@ -15,12 +15,12 @@ class FormTechTaskComm(BaseClass):
         self.final_ws.name = self.budget_name  # добавляет лист, в который будем записывать данные
 
     def make_middle(self) -> None:
-        """Добавляет данные в таблицу 1 ТЗ"""
+        """Добавляет данные в таблицу 1 ТЗ."""
         format_pivot_table = self.final_wb.add_format(cell_formats.format_pivot_table)
         quantity_format = self.final_wb.add_format(cell_formats.quantity_format)
         for row in self.pivot_table.itertuples():  # Итерация по заводам
             if (factory := row[0][1]) != self.current_factory:
-                """Если текущий завод не совпадает с предыдущим - тогда записывает итоги для этого завода и 
+                """Если текущий завод не совпадает с предыдущим - тогда записывает итоги для этого завода и
                 сбрасывает счётчик для № позиции"""
                 self.factory_total_rows_numbers.append(self.row_number)
                 self.write_totals('factory')
@@ -52,16 +52,17 @@ class FormTechTaskComm(BaseClass):
         self.final_ws.set_row(self.row_number + 2, config.addresses_row_height[len(self.factories_set) - 1])
 
     def write_totals(self, total_type: str) -> None:
-        """Добавляет строки с итогами по каждой станции/сетям"""
+        """Добавляет строки с итогами по каждой станции/сетям."""
         format_total_text = self.final_wb.add_format(cell_formats.format_total_text)
         format_total_num = self.final_wb.add_format(cell_formats.format_total_num)
         if total_type == 'factory':
             self.final_ws.merge_range(f'A{self.row_number}:F{self.row_number}', texts.totals[f'{self.current_factory}'],
                                       format_total_text)
             for cell in config.cells:
-                self.final_ws.write_formula(f'{cell}{self.row_number}',
-                                            f'SUM({cell}{self.row_number - 1}:{cell}{self.row_number - self.counter + 1})',
-                                            format_total_num)
+                self.final_ws.write_formula(
+                    f'{cell}{self.row_number}',
+                    f'SUM({cell}{self.row_number - 1}:{cell}{self.row_number - self.counter + 1})',
+                    format_total_num)
         else:
             self.final_ws.merge_range(f'A{self.row_number}:F{self.row_number}', 'Общий итог', format_total_text)
             for cell in config.cells:
@@ -71,7 +72,7 @@ class FormTechTaskComm(BaseClass):
         self.final_ws.write_blank(f'U{self.row_number}', None, format_total_text)
 
     def form(self) -> None:
-        """Формирует ТЗ"""
+        """Формирует ТЗ."""
         self.make_head()
         self.make_middle()
         self.make_tail()

@@ -1,7 +1,7 @@
 import xlsxwriter as xl
 from pandas import DataFrame
 
-from configs import config, cell_formats
+from configs import cell_formats, config
 
 
 class FormEngagementReport:
@@ -9,7 +9,8 @@ class FormEngagementReport:
     def __init__(self, df: DataFrame):
         self.data = df
         self.row_number = 11
-        self.final_wb = xl.Workbook(f'result/3_Отчёт_по_вовлечению_{config.lot_name}.xlsx')  # создаём конечный excel-файл
+        # создаём конечный excel-файл
+        self.final_wb = xl.Workbook(f'result/3_Отчёт_по_вовлечению_{config.lot_name}.xlsx')
         self.final_ws = self.final_wb.add_worksheet()  # добавляем лист, в который будем записывать данные
         self.final_ws.set_landscape()  # альбомная ориентация
         self.final_ws.set_paper(9)  # формат А4
@@ -33,7 +34,7 @@ class FormEngagementReport:
         self.final_ws.freeze_panes(10, 0)
 
     def make_head(self) -> None:
-        """Формирует шапку отчёта по вовлечению"""
+        """Формирует шапку отчёта по вовлечению."""
         head_format1 = self.final_wb.add_format(cell_formats.engagement_report_head_format1)
         head_format2 = self.final_wb.add_format(cell_formats.engagement_report_head_format2)
         title_format = self.final_wb.add_format(cell_formats.engagement_report_title_format)
@@ -58,7 +59,7 @@ class FormEngagementReport:
         self.final_ws.write_row('A10', range(1, 17), columns_name_format)
 
     def fill_table(self) -> None:
-        """Формирует таблицу с данными"""
+        """Формирует таблицу с данными."""
         table_format = self.final_wb.add_format(cell_formats.engagement_report_common_format)
         price_format = self.final_wb.add_format(cell_formats.engagement_report_price_format)
         quantity_format = self.final_wb.add_format(cell_formats.engagement_report_quantity_format)
@@ -80,9 +81,10 @@ class FormEngagementReport:
         self.final_ws.merge_range(f'A{self.row_number}:J{self.row_number}', 'ИТОГО', total_string_format)
         for index, cell in enumerate('KLMNOP'):
             cell_format = quantity_format if (index % 2) == 0 else price_format
-            self.final_ws.write_formula(f'{cell}{self.row_number}',
-                                        f'SUM({cell}{self.row_number - 1}:{cell}{self.row_number - self.data.shape[0]})',
-                                        cell_format)
+            self.final_ws.write_formula(
+                f'{cell}{self.row_number}',
+                f'SUM({cell}{self.row_number - 1}:{cell}{self.row_number - self.data.shape[0]})',
+                cell_format)
         self.row_number += 2
         self.final_ws.write_row(f'A{self.row_number}', ' ' * 8, bottom_border_format)
         self.final_ws.write_string(f'J{self.row_number}', 'Дата проведения вовлечения', simple_format)
@@ -92,7 +94,7 @@ class FormEngagementReport:
                                    simple_format)
 
     def form(self) -> None:
-        """Формирует отчёт по вовлечению"""
+        """Формирует отчёт по вовлечению."""
         self.make_head()
         self.fill_table()
         self.final_wb.close()

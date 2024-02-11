@@ -6,7 +6,7 @@ from configs import config
 
 
 def pivot_helper(file_name: str, form_type: str) -> list:
-    """Создаёт списки сводных таблиц для каждого грузополучателя, в соответствии со статьёй бюджета"""
+    """Создаёт списки сводных таблиц для каждого грузополучателя, в соответствии со статьёй бюджета."""
     data = pd.read_excel(file_name, sheet_name='Sheet1')
     data.rename(columns={'Раздел ГКПЗ': 'Раздел_ГКПЗ'}, inplace=True)
     data['Завод'].replace(config.kts_factories, '7Q61', inplace=True)  # объединяем позиции для КТС
@@ -14,8 +14,10 @@ def pivot_helper(file_name: str, form_type: str) -> list:
     data['Раздел_ГКПЗ'].replace(config.repair_budget, 'РЕМОНТ', inplace=True)
     data['Раздел_ГКПЗ'].replace(config.exploitation_budget, 'ЭКСПЛУАТАЦИЯ', inplace=True)
     data['Раздел_ГКПЗ'].replace(config.investments_budget, 'ИНВЕСТИЦИИ', inplace=True)
-    data['Завод'] = data['Наименование МВЗ'].map(config.crs).fillna(data['Завод'])  # распределение позиций ЦРС по заводам
-    config.lot_name = data['Наименование лота'].iloc[0].strip()  # получаем наименование лота и записываем его в конфиг-файл
+    # распределение позиций ЦРС по заводам
+    data['Завод'] = data['Наименование МВЗ'].map(config.crs).fillna(data['Завод'])
+    # получаем наименование лота и записываем его в конфиг-файл
+    config.lot_name = data['Наименование лота'].iloc[0].strip()
     supply_months = get_supply_months()  # годы/месяцы поставки
     empty_rows = [config.columns.copy() for _ in supply_months]
     for index in range(len(empty_rows)):
@@ -46,7 +48,7 @@ def pivot_helper(file_name: str, form_type: str) -> list:
 
 
 def engagement_report_helper(file_name: str) -> DataFrame:
-    """Подготавливает таблицу с данными для отчёта по вовлечению"""
+    """Подготавливает таблицу с данными для отчёта по вовлечению."""
     data = pd.read_excel(file_name, sheet_name='Sheet1')
     data.sort_values(['Завод', 'Краткий текст позиции'], inplace=True)
     data.reset_index(inplace=True)
@@ -60,6 +62,6 @@ def engagement_report_helper(file_name: str) -> DataFrame:
 
 
 def get_supply_months() -> list:
-    """Создаёт список дат поставки"""
+    """Создаёт список дат поставки."""
     year = config.year if config.start_month in range(1, 10) else config.year - 1
     return pd.date_range(start=f'{year}/{config.start_month}', periods=13, freq='M').to_pydatetime()
