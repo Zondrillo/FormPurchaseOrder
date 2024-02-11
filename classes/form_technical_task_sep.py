@@ -1,7 +1,7 @@
 ﻿from pandas import DataFrame
 
 from classes.base_class import BaseClass
-from configs import config, texts, cell_formats
+from configs import cell_formats, config, texts
 
 
 class FormTechTaskSep(BaseClass):
@@ -12,7 +12,7 @@ class FormTechTaskSep(BaseClass):
         self.final_ws.name = self.current_factory  # добавляет лист, в который будем записывать данные
 
     def make_middle(self) -> None:
-        """Добавляет данные в таблицу 1 ТЗ"""
+        """Добавляет данные в таблицу 1 ТЗ."""
         format_pivot_table = self.final_wb.add_format(cell_formats.format_pivot_table)
         quantity_format = self.final_wb.add_format(cell_formats.quantity_format)
         format_total_text = self.final_wb.add_format(cell_formats.format_total_text)
@@ -43,14 +43,14 @@ class FormTechTaskSep(BaseClass):
         self.row_number += 20
 
     def signatory(self) -> None:
-        """Добавляет подписанта"""
+        """Добавляет подписанта."""
         signatory_format = self.final_wb.add_format(cell_formats.signatory_format)
         self.final_ws.set_row(self.row_number - 1, 67.5)
         self.final_ws.write_string(f'A{self.row_number}', f'{texts.signatories[self.current_factory]}',
                                    signatory_format)
 
     def form(self) -> None:
-        """Формирует ТЗ"""
+        """Формирует ТЗ."""
         self.make_head()
         self.make_middle()
         self.make_tail()

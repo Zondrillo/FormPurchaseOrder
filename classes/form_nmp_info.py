@@ -1,6 +1,6 @@
 import xlsxwriter as xl
 
-from configs import config, texts, cell_formats
+from configs import cell_formats, config, texts
 
 
 class FormNmpInfo:
@@ -28,7 +28,7 @@ class FormNmpInfo:
         self.final_ws.set_column('G:G', 30)
 
     def make_head(self) -> None:
-        """Формирует шапку НМЦ"""
+        """Формирует шапку НМЦ."""
         nmp_info_head_format = self.final_wb.add_format(cell_formats.nmp_info_head_format)
         nmp_info_columns_name_format = self.final_wb.add_format(cell_formats.nmp_info_columns_name_format)
         nmp_info_lot_name_format = self.final_wb.add_format(cell_formats.nmp_info_lot_name_format)
@@ -41,7 +41,7 @@ class FormNmpInfo:
         self.final_ws.write_row('A7', config.nmp_info_head, nmp_info_columns_name_format)
 
     def fill_table(self) -> None:
-        """Формирует таблицу с данными"""
+        """Формирует таблицу с данными."""
         num_format = self.final_wb.add_format(cell_formats.nmp_info_num_format)
         total_num_format = self.final_wb.add_format(cell_formats.nmp_info_total_num_format)
         position_number_format = self.final_wb.add_format(cell_formats.nmp_info_common_format)
@@ -57,7 +57,7 @@ class FormNmpInfo:
             self.counter = 1
             for row in table.itertuples():  # Итерация по заводам
                 if (factory := row[0][1]) != self.current_factory:
-                    """Если текущий завод не совпадает с предыдущим - тогда записывает итоги для этого завода и 
+                    """Если текущий завод не совпадает с предыдущим - тогда записывает итоги для этого завода и
                     сбрасывает счётчик для № позиции"""
                     self.factory_total_rows_numbers.append(self.row_number)
                     self.write_factory_totals()
@@ -88,7 +88,7 @@ class FormNmpInfo:
         self.write_budget_or_global_totals('global_totals')
 
     def write_factory_totals(self) -> None:
-        """Добавляет строки с итогами по каждой станции/сетям"""
+        """Добавляет строки с итогами по каждой станции/сетям."""
         total_string_format = self.final_wb.add_format(cell_formats.nmp_info_total_string_format)
         total_num_format = self.final_wb.add_format(cell_formats.nmp_info_total_num_format)
         total_quantity_format = self.final_wb.add_format(cell_formats.nmp_info_total_quantity_format)
@@ -102,7 +102,7 @@ class FormNmpInfo:
                                     total_num_format)
 
     def write_budget_or_global_totals(self, total_type: str) -> None:
-        """Записывает итоги по текущему бюджету или общие итоги по всем бюджетам"""
+        """Записывает итоги по текущему бюджету или общие итоги по всем бюджетам."""
         if total_type == 'subtotals':
             string_format = self.final_wb.add_format(cell_formats.nmp_info_budget_string_total_format)
             total_format = self.final_wb.add_format(cell_formats.nmp_info_budget_total_format)
@@ -122,7 +122,7 @@ class FormNmpInfo:
         self.final_ws.write_formula(f'G{self.row_number}', total_cost_formula, total_format)
 
     def form(self) -> None:
-        """Формирует НМЦ"""
+        """Формирует НМЦ."""
         self.make_head()
         self.fill_table()
         self.final_wb.close()
