@@ -11,7 +11,7 @@ class FormTechTaskComm(BaseClass):
         self.factories_set = set()
         self.factories_set.add(self.current_factory)
         self.factory_total_rows_numbers = []  # список с номерами строк итоговых значений по заводам
-        self.final_wb.filename = f'ТЗ_{self.budget_name}_{config.lot_name}_Общее.xlsx'
+        self.final_wb.filename = f'result/ТЗ_{self.budget_name}_{config.lot_name}_Общее.xlsx'
         self.final_ws.name = self.budget_name  # добавляет лист, в который будем записывать данные
 
     def make_middle(self) -> None:
@@ -45,7 +45,7 @@ class FormTechTaskComm(BaseClass):
     def make_tail(self) -> None:
         super().make_tail()
         addresses_string = ''
-        for factory_id in self.factories_set:  # подготавливает список грузополучателей
+        for factory_id in sorted(self.factories_set):  # подготавливает список грузополучателей
             addresses_string += f'{texts.addresses[factory_id]}\n'
         self.final_ws.merge_range(f'E{self.row_number + 3}:U{self.row_number + 3}',
                                   texts.supply_conditions_desc2 + addresses_string.strip(), self.merge_format3)
