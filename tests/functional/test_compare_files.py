@@ -20,7 +20,7 @@ class TestCompareFiles:
     def test_compare_files_quantity(self):
         actual_quantity = len(self.actual_file_names)
         expected_quantity = len(self.expected_file_names)
-        (assert_that(actual_quantity, description='Количество сгенерированных файлов не соответсвует ожидаемому.')
+        (assert_that(actual_quantity, description='Количество сгенерированных файлов не соответствует ожидаемому.')
          .is_equal_to(expected_quantity))
 
     def test_compare_file_names(self):

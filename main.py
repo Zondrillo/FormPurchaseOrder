@@ -1,3 +1,4 @@
+import os
 import warnings
 
 from classes.form_engagement_report import FormEngagementReport
@@ -12,6 +13,8 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def main(filepath: str = config.sap_import_filename):
     """Блок подготовки сводных таблиц."""
+    if not os.path.exists('result'):
+        os.mkdir('result')
     common_tables = pivot_helper(filepath, 'common')
     sep_tables = pivot_helper(filepath, 'separated')
     nmp_info_tables = pivot_helper(filepath, 'nmp_info')

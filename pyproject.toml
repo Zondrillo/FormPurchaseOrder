@@ -23,6 +23,11 @@ assertpy = "^1.1"
 ruff = "^0.2.1"
 black = "^24.1.1"
 
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::DeprecationWarning:pandas.*:"
+]
+
 [tool.ruff]
 exclude = [
     ".bzr",
