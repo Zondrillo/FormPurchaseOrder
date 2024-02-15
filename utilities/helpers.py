@@ -42,8 +42,9 @@ def pivot_helper(file_name: str, form_type: str) -> list:
         pivots_list = [pt for budget in config.budgets
                        if (pt := pivoted_data.query(f'Раздел_ГКПЗ == ["{budget}"]')).size != 0]
     else:
-        pivots_list = [pt for factory in config.factories for budget in config.budgets
-                       if (pt := pivoted_data.query(f'Завод == ["{factory}"] & Раздел_ГКПЗ == ["{budget}"]')).size != 0]
+        pivots_list = [
+            pt for factory in config.factories for budget in config.budgets
+            if (pt := pivoted_data.query(f'Завод == ["{factory.code}"] & Раздел_ГКПЗ == ["{budget}"]')).size != 0]
     return pivots_list
 
 
