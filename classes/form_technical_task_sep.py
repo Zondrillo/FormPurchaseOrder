@@ -8,8 +8,8 @@ class FormTechTaskSep(BaseClass):
 
     def __init__(self, pivot_table: DataFrame):
         super().__init__(pivot_table)
-        self.final_wb.filename = f'result/ТЗ_{self.current_factory}_{self.budget_name}_{config.lot_name}.xlsx'
-        self.final_ws.name = self.current_factory  # добавляет лист, в который будем записывать данные
+        self.final_wb.filename = f'result/ТЗ_{self.current_factory.code}_{self.budget_name}_{config.lot_name}.xlsx'
+        self.final_ws.name = self.current_factory.code  # добавляет лист, в который будем записывать данные
 
     def make_middle(self) -> None:
         """Добавляет данные в таблицу 1 ТЗ."""
@@ -23,11 +23,10 @@ class FormTechTaskSep(BaseClass):
             self.final_ws.write_formula(f'G{self.row_number}', f'=SUM(H{self.row_number}:T{self.row_number})',
                                         quantity_format)
             self.final_ws.write_row(f'H{self.row_number}', row[1:], quantity_format)
-            self.final_ws.write_string(f'U{self.row_number}', texts.addresses[f'{self.current_factory}'],
-                                       format_pivot_table)
+            self.final_ws.write_string(f'U{self.row_number}', self.current_factory.address, format_pivot_table)
             self.row_number += 1
             self.counter += 1
-        self.final_ws.merge_range(f'A{self.row_number}:F{self.row_number}', texts.totals[f'{self.current_factory}'],
+        self.final_ws.merge_range(f'A{self.row_number}:F{self.row_number}', self.current_factory.total,
                                   format_total_text)
         for cell in config.cells:
             self.final_ws.write_formula(f'{cell}{self.row_number}', f'=SUM({cell}8:{cell}{self.row_number - 1})',
@@ -37,7 +36,7 @@ class FormTechTaskSep(BaseClass):
     def make_tail(self) -> None:
         super().make_tail()
         self.final_ws.merge_range(f'E{self.row_number + 3}:U{self.row_number + 3}',
-                                  f'{texts.supply_conditions_desc2}{texts.addresses[self.current_factory]}',
+                                  f'{texts.supply_conditions_desc2}{self.current_factory.address}',
                                   self.merge_format3)
         self.final_ws.set_row(self.row_number + 2, 46)
         self.row_number += 20
@@ -46,8 +45,7 @@ class FormTechTaskSep(BaseClass):
         """Добавляет подписанта."""
         signatory_format = self.final_wb.add_format(cell_formats.signatory_format)
         self.final_ws.set_row(self.row_number - 1, 67.5)
-        self.final_ws.write_string(f'A{self.row_number}', f'{texts.signatories[self.current_factory]}',
-                                   signatory_format)
+        self.final_ws.write_string(f'A{self.row_number}', f'{self.current_factory.signatory}', signatory_format)
 
     def form(self) -> None:
         """Формирует ТЗ."""
