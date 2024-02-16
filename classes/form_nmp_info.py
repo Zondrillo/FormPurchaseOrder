@@ -1,6 +1,7 @@
 import xlsxwriter as xl
 
 from configs import cell_formats, config, texts
+from configs.config import factories
 
 
 class FormNmpInfo:
@@ -49,22 +50,25 @@ class FormNmpInfo:
         for table in self.pivot_tables_list:  # Итерация по бюджетам
             self.factory_total_rows_numbers = []  # список с номерами строк итоговых значений по заводам
             self.current_budget = table.index.get_level_values('Раздел_ГКПЗ')[0]
-            self.current_factory = table.index.get_level_values('Завод')[0]
+            # получает id завода, с которым работает в данный момент
+            current_factory_code = table.index.get_level_values('Завод')[0]
+            # достаёт объект Factory из словаря factories по коду завода
+            self.current_factory = factories.get(current_factory_code)
             self.final_ws.merge_range(f'A{self.row_number}:G{self.row_number}',
-                                      f'Бюджет "{self.current_budget}", {texts.factories_names[self.current_factory]}',
+                                      f'Бюджет "{self.current_budget}", {self.current_factory.name}',
                                       total_num_format)
             self.row_number += 1
             self.counter = 1
             for row in table.itertuples():  # Итерация по заводам
-                if (factory := row[0][1]) != self.current_factory:
+                factory_code = row[0][1]
+                if (factory := factories.get(factory_code)) != self.current_factory:
                     """Если текущий завод не совпадает с предыдущим - тогда записывает итоги для этого завода и
                     сбрасывает счётчик для № позиции"""
                     self.factory_total_rows_numbers.append(self.row_number)
                     self.write_factory_totals()
                     self.current_factory = factory
                     self.final_ws.merge_range(f'A{self.row_number + 1}:G{self.row_number + 1}',
-                                              f'Бюджет "{self.current_budget}", '
-                                              f'{texts.factories_names[self.current_factory]}',
+                                              f'Бюджет "{self.current_budget}", {self.current_factory.name}',
                                               total_num_format)
                     self.row_number += 2
                     self.counter = 1
@@ -92,7 +96,7 @@ class FormNmpInfo:
         total_string_format = self.final_wb.add_format(cell_formats.nmp_info_total_string_format)
         total_num_format = self.final_wb.add_format(cell_formats.nmp_info_total_num_format)
         total_quantity_format = self.final_wb.add_format(cell_formats.nmp_info_total_quantity_format)
-        self.final_ws.merge_range(f'A{self.row_number}:E{self.row_number}', texts.totals[self.current_factory],
+        self.final_ws.merge_range(f'A{self.row_number}:E{self.row_number}', self.current_factory.total,
                                   total_string_format)
         self.final_ws.write_formula(f'F{self.row_number}',
                                     f'=SUM(F{self.row_number - 1}:F{self.row_number - self.counter + 1})',

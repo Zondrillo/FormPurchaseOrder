@@ -35,6 +35,6 @@ class TestCompareFiles:
             actual_file = pd.read_excel(actual_file_path)
             expected_file = pd.read_excel(expected_file_path)
 
-            diff = pd.concat([actual_file, expected_file]).drop_duplicates(keep=False).dropna()
+            diff = pd.concat([actual_file, expected_file]).drop_duplicates(keep=False)
 
             assert_that(diff, description=f'В файле "{file_name}" есть отличия.').is_empty()

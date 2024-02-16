@@ -2,6 +2,7 @@ import xlsxwriter as xl
 from pandas import DataFrame
 
 from configs import cell_formats, config, texts
+from configs.config import factories
 from utilities.helpers import get_supply_months
 
 
@@ -12,12 +13,14 @@ class BaseClass:
         self.counter = 1  # счётчик для № позиции
         self.pivot_table = pivot_table
         self.pivot_table.fillna('', inplace=True)
-        # получаем раздел ГКПЗ с которым работаем в данный момент
+        # получает раздел ГКПЗ с которым работаем в данный момент
         self.budget_name = pivot_table.index.get_level_values('Раздел_ГКПЗ')[0]
-        # получаем id завода, с которым работаем в данный момент
-        self.current_factory = pivot_table.index.get_level_values('Завод')[0]
-        self.final_wb = xl.Workbook()  # создаём конечный excel-файл, в который будем записывать данные
-        self.final_ws = self.final_wb.add_worksheet()  # добавляем лист, в который будем записывать данные
+        # получает id завода, с которым работает в данный момент
+        current_factory_code = pivot_table.index.get_level_values('Завод')[0]
+        # достаёт объект Factory из словаря factories по коду завода
+        self.current_factory = factories.get(current_factory_code)
+        self.final_wb = xl.Workbook()  # создаёт конечный excel-файл, в который будет записывать данные
+        self.final_ws = self.final_wb.add_worksheet()  # добавляет лист, в который будет записывать данные
         self.final_ws.set_landscape()  # альбомная ориентация
         self.final_ws.set_paper(9)  # формат А4
         self.final_ws.fit_to_pages(1, 0)  # вписать все столбцы на одну страницу
